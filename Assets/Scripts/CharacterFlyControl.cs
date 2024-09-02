@@ -6,6 +6,7 @@ public class CharacterFlyControl : MonoBehaviour
     [SerializeField] private float _forceValueForLeftRight;
 
     private Rigidbody _rigidbody;
+    private int _playerRotationAngleLimit = 30;
 
     public int JumpCount { get; private set; }
 
@@ -16,24 +17,20 @@ public class CharacterFlyControl : MonoBehaviour
 
     void Update()
     {
+        PlayerRotation();
 
         if (Input.GetKeyDown(KeyCode.Space))
         {
-            _rigidbody.AddForce(Vector3.up * _forceValueForUp, ForceMode.Impulse);
+            PlayerMove(Vector3.up, _forceValueForUp, ForceMode.Impulse);
             JumpCount++;
         }
         else if (Input.GetKey(KeyCode.A))
         {
-            _rigidbody.AddForce(Vector3.right * _forceValueForLeftRight, ForceMode.VelocityChange);
+            PlayerMove(Vector3.right.normalized, _forceValueForLeftRight, ForceMode.VelocityChange);
         }
         else if (Input.GetKey(KeyCode.D))
         {
-            _rigidbody.AddForce(Vector3.right * -_forceValueForLeftRight, ForceMode.VelocityChange);
-        }
-
-        if (Input.GetKeyUp(KeyCode.A) || Input.GetKeyUp(KeyCode.D))
-        {
-            _rigidbody.velocity = Vector3.zero;
+            PlayerMove(Vector3.right.normalized, -_forceValueForLeftRight, ForceMode.VelocityChange);
         }
     }
 
@@ -45,5 +42,26 @@ public class CharacterFlyControl : MonoBehaviour
     public void ResetVelocity()
     {
         _rigidbody.velocity = Vector3.zero;
+    }
+
+    private void PlayerMove(Vector3 moveDirection, float forceValue, ForceMode forceMode)
+    {
+        _rigidbody.AddForce(moveDirection * forceValue, forceMode);
+    }
+
+    private void PlayerRotation()
+    {
+        if (_rigidbody.velocity.x > 0)
+        {
+            transform.eulerAngles = new Vector3(0, Mathf.Lerp(0, _playerRotationAngleLimit, 10f), 0);
+        }
+        else if (_rigidbody.velocity.x < 0)
+        {
+            transform.eulerAngles = new Vector3(0, Mathf.Lerp(0, -_playerRotationAngleLimit, 10f), 0);
+        }
+        else
+        {
+            transform.eulerAngles = Vector3.zero;
+        }
     }
 }
