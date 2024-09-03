@@ -27,7 +27,7 @@ public class GameTracking : MonoBehaviour
               
         if (_playerPosition.y > _upAndDownLimit || _playerPosition.y < -_upAndDownLimit)
         {            
-            PlayerDead();            
+            PlayerDie();            
         }
         else if (_playerPosition.x > _leftAndRightLimit)
         {
@@ -55,7 +55,7 @@ public class GameTracking : MonoBehaviour
         StartCoroutine(_characterFlyControl.JumpOnStart());
     }
 
-    private void PlayerDead()
+    private void PlayerDie()
     {
         _playerPosition = Vector3.zero;
         _characterFlyControl.gameObject.SetActive(false);

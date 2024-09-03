@@ -11,7 +11,7 @@ public class CharacterFlyControl : MonoBehaviour
 
     private Rigidbody _rigidbody;
     private int _playerRotationAngleLimit = 30;
-    private string _jumpAnimation = "BirdFlyJump";
+    private string _jumpAnimation = "Jump";
 
     public int JumpCount { get; private set; }    
 
@@ -28,7 +28,7 @@ public class CharacterFlyControl : MonoBehaviour
         {
             PlayerMove(Vector3.up, _forceValueForUp, ForceMode.Impulse);
             _soundManager.PlayFlapSound();
-            _animator.Play(_jumpAnimation);
+            _animator.SetTrigger(_jumpAnimation);
             JumpCount++;
         }
         else if (Input.GetKey(KeyCode.A))

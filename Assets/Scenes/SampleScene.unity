@@ -370,7 +370,7 @@ MonoBehaviour:
   _characterFlyControl: {fileID: 296076418}
   _soundManager: {fileID: 621607582}
   _upAndDownLimit: 9.5
-  _leftAndRightLimit: 15
+  _leftAndRightLimit: 20
   _upperObstacle: {fileID: 933555569}
   _lowerObstacle: {fileID: 1022023406}
 --- !u!4 &92232986
