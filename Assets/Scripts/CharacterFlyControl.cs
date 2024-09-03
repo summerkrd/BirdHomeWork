@@ -1,14 +1,17 @@
+using System.Collections;
 using UnityEngine;
 
 public class CharacterFlyControl : MonoBehaviour
 {
+    [SerializeField] private SoundManager _soundManager;
+
     [SerializeField] private int _forceValueForUp;
-    [SerializeField] private float _forceValueForLeftRight;
+    [SerializeField] private float _forceValueForLeftRight;    
 
     private Rigidbody _rigidbody;
-    private int _playerRotationAngleLimit = 30;
+    private int _playerRotationAngleLimit = 30;    
 
-    public int JumpCount { get; private set; }
+    public int JumpCount { get; private set; }    
 
     private void Awake()
     {
@@ -16,12 +19,13 @@ public class CharacterFlyControl : MonoBehaviour
     }
 
     void Update()
-    {
+    {        
         PlayerRotation();
 
         if (Input.GetKeyDown(KeyCode.Space))
         {
             PlayerMove(Vector3.up, _forceValueForUp, ForceMode.Impulse);
+            _soundManager.PlayFlapSound();
             JumpCount++;
         }
         else if (Input.GetKey(KeyCode.A))
@@ -41,7 +45,7 @@ public class CharacterFlyControl : MonoBehaviour
 
     public void ResetVelocity()
     {
-        _rigidbody.velocity = Vector3.zero;
+        _rigidbody.velocity = Vector3.zero;        
     }
 
     private void PlayerMove(Vector3 moveDirection, float forceValue, ForceMode forceMode)
@@ -51,17 +55,24 @@ public class CharacterFlyControl : MonoBehaviour
 
     private void PlayerRotation()
     {
-        if (_rigidbody.velocity.x > 0)
+        if (_rigidbody.velocity.x > 0.2f)
         {
-            transform.eulerAngles = new Vector3(0, Mathf.Lerp(0, _playerRotationAngleLimit, 10f), 0);
+            transform.localEulerAngles = new Vector3(0, _playerRotationAngleLimit, 0);
         }
-        else if (_rigidbody.velocity.x < 0)
+        else if (_rigidbody.velocity.x < - 0.2f)
         {
-            transform.eulerAngles = new Vector3(0, Mathf.Lerp(0, -_playerRotationAngleLimit, 10f), 0);
+            transform.localEulerAngles = new Vector3(0, -_playerRotationAngleLimit, 0);
         }
         else
         {
             transform.eulerAngles = Vector3.zero;
         }
+    }
+
+    public IEnumerator JumpOnStart()
+    {
+        yield return new WaitForSeconds(0.2f);
+
+        PlayerMove(Vector3.up, _forceValueForUp, ForceMode.Impulse);
     }
 }

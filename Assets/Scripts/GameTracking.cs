@@ -3,12 +3,13 @@ using UnityEngine;
 public class GameTracking : MonoBehaviour
 {
     [SerializeField] private CharacterFlyControl _characterFlyControl;
+    [SerializeField] private SoundManager _soundManager;
     
     [SerializeField] private float _upAndDownLimit;
     [SerializeField] private float _leftAndRightLimit;
     
     [SerializeField] private Transform _upperObstacle;
-    [SerializeField] private Transform _lowerObstacle;
+    [SerializeField] private Transform _lowerObstacle;       
 
     private void Start()
     {
@@ -21,10 +22,11 @@ public class GameTracking : MonoBehaviour
     private void Update()
     {
         Vector3 playerPosition = _characterFlyControl.transform.position;
-
+              
         if (playerPosition.y > _upAndDownLimit || playerPosition.y < -_upAndDownLimit)
-        {
-            _characterFlyControl.gameObject.SetActive(false);
+        {            
+            PlayerDead();
+            
         }
         else if (playerPosition.x > _leftAndRightLimit)
         {
@@ -35,20 +37,29 @@ public class GameTracking : MonoBehaviour
             playerPosition.x = -_leftAndRightLimit;
         }
 
-        _characterFlyControl.transform.position = playerPosition;
+        _characterFlyControl.transform.position = playerPosition;        
 
         if (Input.GetKeyDown(KeyCode.Return))
         {
-            StartGame();
-        }
+            StartGame();            
+        }        
     }
 
     private void StartGame()
     {
+        _soundManager.PlayBackgroundSound(true);
         _characterFlyControl.transform.position = Vector3.zero;
         _characterFlyControl.ResetVelocity();
         _characterFlyControl.gameObject.SetActive(true);   
         _characterFlyControl.ResetJumpCounter();
+        StartCoroutine(_characterFlyControl.JumpOnStart());
+    }
+
+    private void PlayerDead()
+    {
+        _soundManager.PlayBackgroundSound(false);
+        _soundManager.PlayHitSound();
+        _characterFlyControl.gameObject.SetActive(false);
     }
 }
 
