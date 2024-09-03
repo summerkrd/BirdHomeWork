@@ -4,12 +4,14 @@ using UnityEngine;
 public class CharacterFlyControl : MonoBehaviour
 {
     [SerializeField] private SoundManager _soundManager;
+    [SerializeField] private Animator _animator;
 
     [SerializeField] private int _forceValueForUp;
     [SerializeField] private float _forceValueForLeftRight;    
 
     private Rigidbody _rigidbody;
-    private int _playerRotationAngleLimit = 30;    
+    private int _playerRotationAngleLimit = 30;
+    private string _jumpAnimation = "BirdFlyJump";
 
     public int JumpCount { get; private set; }    
 
@@ -26,6 +28,7 @@ public class CharacterFlyControl : MonoBehaviour
         {
             PlayerMove(Vector3.up, _forceValueForUp, ForceMode.Impulse);
             _soundManager.PlayFlapSound();
+            _animator.Play(_jumpAnimation);
             JumpCount++;
         }
         else if (Input.GetKey(KeyCode.A))

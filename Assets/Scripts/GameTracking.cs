@@ -3,13 +3,15 @@ using UnityEngine;
 public class GameTracking : MonoBehaviour
 {
     [SerializeField] private CharacterFlyControl _characterFlyControl;
-    [SerializeField] private SoundManager _soundManager;
+    [SerializeField] private SoundManager _soundManager;    
     
     [SerializeField] private float _upAndDownLimit;
     [SerializeField] private float _leftAndRightLimit;
     
     [SerializeField] private Transform _upperObstacle;
-    [SerializeField] private Transform _lowerObstacle;       
+    [SerializeField] private Transform _lowerObstacle;    
+    
+    private Vector3 _playerPosition;
 
     private void Start()
     {
@@ -21,23 +23,22 @@ public class GameTracking : MonoBehaviour
 
     private void Update()
     {
-        Vector3 playerPosition = _characterFlyControl.transform.position;
+        _playerPosition = _characterFlyControl.transform.position;
               
-        if (playerPosition.y > _upAndDownLimit || playerPosition.y < -_upAndDownLimit)
+        if (_playerPosition.y > _upAndDownLimit || _playerPosition.y < -_upAndDownLimit)
         {            
-            PlayerDead();
-            
+            PlayerDead();            
         }
-        else if (playerPosition.x > _leftAndRightLimit)
+        else if (_playerPosition.x > _leftAndRightLimit)
         {
-            playerPosition.x = _leftAndRightLimit;
+            _playerPosition.x = _leftAndRightLimit;
         }
-        else if (playerPosition.x < -_leftAndRightLimit)
+        else if (_playerPosition.x < -_leftAndRightLimit)
         {
-            playerPosition.x = -_leftAndRightLimit;
+            _playerPosition.x = -_leftAndRightLimit;
         }
 
-        _characterFlyControl.transform.position = playerPosition;        
+        _characterFlyControl.transform.position = _playerPosition;
 
         if (Input.GetKeyDown(KeyCode.Return))
         {
@@ -47,8 +48,7 @@ public class GameTracking : MonoBehaviour
 
     private void StartGame()
     {
-        _soundManager.PlayBackgroundSound(true);
-        _characterFlyControl.transform.position = Vector3.zero;
+        _soundManager.PlayBackgroundSound(true);        
         _characterFlyControl.ResetVelocity();
         _characterFlyControl.gameObject.SetActive(true);   
         _characterFlyControl.ResetJumpCounter();
@@ -57,9 +57,10 @@ public class GameTracking : MonoBehaviour
 
     private void PlayerDead()
     {
-        _soundManager.PlayBackgroundSound(false);
-        _soundManager.PlayHitSound();
+        _playerPosition = Vector3.zero;
         _characterFlyControl.gameObject.SetActive(false);
+        _soundManager.PlayHitSound();
+        _soundManager.PlayBackgroundSound(false);
     }
 }
 
